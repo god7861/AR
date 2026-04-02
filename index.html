@@ -76,6 +76,25 @@
             transform: scale(0.98);
         }
         
+        .ar-hint {
+            background: #e8f4fd;
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .ar-hint h4 {
+            color: #1976D2;
+            margin-bottom: 10px;
+        }
+        
+        .ar-hint ol {
+            color: #555;
+            padding-left: 20px;
+            line-height: 1.8;
+        }
+        
         .info {
             background: #f8f9fa;
             padding: 20px;
@@ -110,10 +129,13 @@
                 src="cube.glb"
                 alt="3D куб"
                 ar
-                ar-modes="scene-viewer quick-look"
+                ar-modes="webxr scene-viewer quick-look"
+                ar-scale="auto"
+                ar-placement="floor"
                 camera-controls
                 auto-rotate
-                shadow-intensity="1">
+                shadow-intensity="1"
+                camera-orbit="45deg 55deg 105%">
                 
                 <button slot="ar-button" class="ar-button">
                     👁️ Посмотреть в AR
@@ -122,10 +144,56 @@
             </model-viewer>
         </div>
         
+        <!-- Подсказка по AR -->
+        <div class="ar-hint">
+            <h4>📱 Как использовать дополненную реальность:</h4>
+            <ol>
+                <li>Нажми кнопку <strong>"Посмотреть в AR"</strong></li>
+                <li>Разреши доступ к камере</li>
+                <li><strong>Медленно поводи телефоном</strong> по комнате (сканирование поверхности)</li>
+                <li>Когда появится сетка/точка — <strong>нажми на пол или стену</strong></li>
+                <li>Куб появится в твоём пространстве! 🎉</li>
+                <li>Можно ходить вокруг, приближать, перемещать</li>
+            </ol>
+        </div>
+        
         <div class="info">
             <p><strong>Выполнил:</strong> Лун Артём Андреевич</p>
             <p><strong>Группа:</strong> БЗИ43ТВР</p>
         </div>
     </div>
+    
+    <script>
+        // Обработчики событий AR
+        const modelViewer = document.querySelector('model-viewer');
+        
+        // Когда AR запускается
+        modelViewer.addEventListener('ar-status', (event) => {
+            console.log('AR статус:', event.detail.status);
+            
+            if (event.detail.status === 'session-started') {
+                console.log('✅ AR сессия началась');
+            }
+            
+            if (event.detail.status === 'object-placed') {
+                console.log('✅ Модель размещена');
+            }
+            
+            if (event.detail.status === 'failed') {
+                console.log('❌ Ошибка AR');
+                alert('Не удалось запустить AR. Проверьте освещение и попробуйте снова.');
+            }
+        });
+        
+        // Когда модель загружена
+        modelViewer.addEventListener('load', (event) => {
+            console.log('✅ Модель загружена');
+        });
+        
+        // Ошибки
+        modelViewer.addEventListener('error', (event) => {
+            console.error('❌ Ошибка:', event);
+        });
+    </script>
 </body>
 </html>
