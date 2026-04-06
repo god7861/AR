@@ -28,17 +28,8 @@
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
         }
         
-        h1 {
-            text-align: center;
-            color: #333;
-            margin-bottom: 10px;
-        }
-        
-        .subtitle {
-            text-align: center;
-            color: #666;
-            margin-bottom: 20px;
-        }
+        h1 { text-align: center; color: #333; margin-bottom: 10px; }
+        .subtitle { text-align: center; color: #666; margin-bottom: 20px; }
         
         .model-container {
             width: 100%;
@@ -48,7 +39,6 @@
             margin-bottom: 20px;
             position: relative;
             overflow: hidden;
-            box-shadow: inset 0 0 40px rgba(0,0,0,0.3);
         }
         
         model-viewer {
@@ -70,15 +60,8 @@
             display: none;
         }
         
-        .progress-bar.hide { display: none; }
         .progress-bar.show { display: block; }
-        
-        .update-bar {
-            height: 100%;
-            width: 0%;
-            background: #667eea;
-            transition: width 0.2s;
-        }
+        .update-bar { height: 100%; width: 0%; background: #667eea; transition: width 0.2s; }
         
         .error-message {
             position: absolute;
@@ -91,7 +74,6 @@
             background: rgba(220, 53, 69, 0.9);
             border-radius: 10px;
             display: none;
-            max-width: 90%;
         }
         
         .error-message.show { display: block; }
@@ -108,10 +90,7 @@
             display: block;
             margin: 20px auto;
             box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-            transition: transform 0.1s;
         }
-        
-        .ar-button:active { transform: scale(0.98); }
         
         .ar-hint {
             background: #e8f4fd;
@@ -134,9 +113,7 @@
         .info p { color: #666; line-height: 1.6; margin: 5px 0; }
         .info strong { color: #333; }
         
-        @media (max-width: 600px) {
-            .model-container { height: 400px; }
-        }
+        @media (max-width: 600px) { .model-container { height: 400px; } }
     </style>
 </head>
 <body>
@@ -158,14 +135,12 @@
                 shadow-intensity="1"
                 exposure="1"
                 environment-image="neutral"
-                camera-orbit="45deg 55deg auto"
-                min-camera-orbit="auto auto 2m"
-                max-camera-orbit="auto auto 20m"
-                interaction-prompt="auto">
+                camera-orbit="45deg 55deg 15m"
+                min-camera-orbit="0deg 0deg 5m"
+                max-camera-orbit="360deg 180deg 50m"
+                field-of-view="75deg">
                 
-                <button slot="ar-button" class="ar-button">
-                    👁️ Посмотреть в AR
-                </button>
+                <button slot="ar-button" class="ar-button">👁️ Посмотреть в AR</button>
                 
                 <div slot="progress-bar" class="progress-bar show">
                     <div class="update-bar"></div>
@@ -173,19 +148,18 @@
                 
                 <div slot="error-message" class="error-message">
                     <strong>⚠️ Не удалось загрузить модель</strong><br>
-                    <small>Проверьте имя файла и подключение к интернету</small>
+                    <small>Проверьте имя файла</small>
                 </div>
             </model-viewer>
         </div>
         
         <div class="ar-hint">
-            <h4>📱 Как использовать дополненную реальность:</h4>
+            <h4>📱 Как использовать AR:</h4>
             <ol>
-                <li>Нажми кнопку <strong>"Посмотреть в AR"</strong></li>
+                <li>Нажми <strong>"Посмотреть в AR"</strong></li>
                 <li>Разреши доступ к камере</li>
-                <li><strong>Медленно поводи телефоном</strong> по комнате</li>
-                <li>Когда появится сетка — <strong>нажми на пол</strong></li>
-                <li>Модель появится в твоём пространстве! 🎉</li>
+                <li>Поводи телефоном по комнате</li>
+                <li>Нажми на пол когда появится сетка</li>
             </ol>
         </div>
         
@@ -200,9 +174,8 @@
         const progressBar = modelViewer.querySelector('.update-bar');
         const errorMsg = modelViewer.querySelector('.error-message');
         
-        modelViewer.addEventListener('progress', (event) => {
-            const percent = event.detail.totalProgress * 100;
-            progressBar.style.width = `${percent}%`;
+        modelViewer.addEventListener('progress', (e) => {
+            progressBar.style.width = `${e.detail.totalProgress * 100}%`;
         });
         
         modelViewer.addEventListener('load', () => {
@@ -213,12 +186,6 @@
         modelViewer.addEventListener('error', () => {
             progressBar.parentElement.classList.remove('show');
             errorMsg.classList.add('show');
-        });
-        
-        modelViewer.addEventListener('ar-status', (event) => {
-            if (event.detail.status === 'failed') {
-                alert('Не удалось запустить AR. Проверьте освещение и попробуйте снова.');
-            }
         });
     </script>
 </body>
