@@ -1,156 +1,140 @@
-!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3D Пончик - WebAR</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Дополненная реальность — GLB модель</title>
+    <!-- Подключаем компонент model-viewer от Google -->
     <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: system-ui, -apple-system, sans-serif;
-            background: #f0f2f5;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-        .card {
-            background: #fff;
-            border-radius: 16px;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
-            max-width: 700px;
-            width: 100%;
+            margin: 0;
             overflow: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-        .header {
-            padding: 20px 24px 10px;
-            text-align: center;
-        }
-        .header h1 { font-size: 1.8rem; color: #2d3748; margin-bottom: 4px; }
-        .header p { color: #718096; font-size: 0.95rem; }
-        
-        .viewer-wrap {
+        /* Контейнер на весь экран */
+        .ar-container {
+            width: 100vw;
+            height: 100vh;
             position: relative;
-            height: 450px;
-            background: linear-gradient(135deg, #1e3c72, #2a5298);
         }
         model-viewer {
             width: 100%;
             height: 100%;
-            --poster-color: transparent;
+            background-color: #f0f0f0;
         }
-        
-        .bar {
+        /* Инструкция и кнопка */
+        .info {
             position: absolute;
-            bottom: 16px;
+            bottom: 20px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 0 20px;
+            pointer-events: none;
+            backdrop-filter: blur(5px);
+            font-size: 14px;
+            z-index: 10;
+        }
+        .ar-button {
+            position: absolute;
+            bottom: 90px;
             left: 50%;
             transform: translateX(-50%);
-            width: 160px;
-            height: 4px;
-            background: rgba(255,255,255,0.3);
-            border-radius: 2px;
-            overflow: hidden;
-            display: none;
+            background: #007aff;
+            color: white;
+            border: none;
+            border-radius: 40px;
+            padding: 12px 28px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            z-index: 20;
+            pointer-events: auto;
+            transition: 0.2s;
         }
-        .bar.show { display: block; }
-        .bar-fill {
-            height: 100%;
-            width: 0%;
-            background: #63b3ed;
-            transition: width 0.2s;
+        .ar-button:hover {
+            background: #0056b3;
         }
-        
-        .error-msg {
+        @media (max-width: 768px) {
+            .ar-button {
+                bottom: 100px;
+                padding: 10px 24px;
+                font-size: 16px;
+            }
+        }
+        /* Загрузочный индикатор */
+        .loader {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background: #e53e3e;
-            color: #fff;
-            padding: 12px 16px;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            display: none;
-            text-align: center;
-        }
-        .error-msg.show { display: block; }
-        
-        .footer {
-            padding: 16px 24px 24px;
-            text-align: center;
-            color: #4a5568;
-            font-size: 0.9rem;
-        }
-        .footer strong { color: #2d3748; }
-        
-        @media (max-width: 600px) {
-            .viewer-wrap { height: 350px; }
+            color: #333;
+            background: rgba(255,255,255,0.9);
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-weight: bold;
+            z-index: 15;
+            pointer-events: none;
         }
     </style>
 </head>
 <body>
-    <div class="card">
-        <div class="header">
-            <h1>🍩 3D Пончик</h1>
-            <p>Вращай модель или открой в дополненной реальности</p>
-        </div>
-        
-        <div class="viewer-wrap">
-            <model-viewer
-                id="viewer"
-                src="model.glb"
-                alt="3D модель пончика"
-                ar
-                ar-modes="webxr scene-viewer quick-look"
-                ar-scale="auto"
-                ar-placement="floor"
-                camera-controls
-                auto-rotate
-                shadow-intensity="1"
-                exposure="1"
-                environment-image="neutral"
-                camera-orbit="45deg 55deg auto"
-                min-camera-orbit="auto auto 2m"
-                max-camera-orbit="auto auto 12m"
-                interaction-prompt="auto">
-                
-                <div slot="progress-bar" class="bar show">
-                    <div class="bar-fill"></div>
-                </div>
-                
-                <div slot="error-message" class="error-msg">
-                    ⚠️ Ошибка загрузки<br>
-                    <small>Проверьте имя файла model.glb</small>
-                </div>
-            </model-viewer>
-        </div>
-        
-        <div class="footer">
-            <p><strong>Выполнил:</strong> Лун Артём Андреевич | <strong>Группа:</strong> БЗИ43ТВР</p>
-        </div>
+<div class="ar-container">
+    <model-viewer id="ar-viewer"
+                  src="https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/main/2.0/DamagedHelmet/glTF/DamagedHelmet.gltf"
+                  alt="3D модель"
+                  ar
+                  ar-modes="scene-viewer webxr quick-look"
+                  camera-controls
+                  auto-rotate
+                  rotation-per-second="30deg"
+                  environment-image="neutral"
+                  shadow-intensity="1"
+                  exposure="1.2">
+        <div class="loader">Загрузка модели...</div>
+    </model-viewer>
+    <button class="ar-button" id="ar-launch">🔍 Посмотреть в AR</button>
+    <div class="info">
+        📱 Нажмите кнопку, чтобы поместить модель в реальное пространство.<br>
+        Поддерживается на Android (Google Scene Viewer) и iOS (ARKit Quick Look).
     </div>
+</div>
 
-    <script>
-        const viewer = document.getElementById('viewer');
-        const bar = viewer.querySelector('.bar-fill');
-        const barWrap = viewer.querySelector('.bar');
-        const err = viewer.querySelector('.error-msg');
+<script>
+    // ----- ЗАМЕНИТЕ ЭТУ ССЫЛКУ НА ВАШ GLB ФАЙЛ НА GITHUB -----
+    // Пример: "https://ваш-пользователь.github.io/ваш-репозиторий/модель.glb"
+    // Или используйте raw-ссылку из репозитория (должно быть HTTPS!)
+    const MODEL_URL = "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/main/2.0/DamagedHelmet/glTF/DamagedHelmet.gltf";
+    // Если у вас именно .glb, замените ссылку. Например:
+    // const MODEL_URL = "https://ваш-логин.github.io/название-репо/моя_модель.glb";
+    
+    const viewer = document.getElementById("ar-viewer");
+    const launchBtn = document.getElementById("ar-launch");
 
-        viewer.addEventListener('progress', e => {
-            bar.style.width = `${e.detail.totalProgress * 100}%`;
-        });
+    // Устанавливаем URL модели (замените на свой)
+    viewer.src = MODEL_URL;
 
-        viewer.addEventListener('load', () => {
-            barWrap.classList.remove('show');
-            err.classList.remove('show');
-        });
+    // Обработчик для кнопки AR — запускает полноэкранный AR-режим
+    launchBtn.addEventListener("click", () => {
+        // Активируем AR, если браузер поддерживает
+        if (viewer.canActivateAR) {
+            viewer.activateAR();
+        } else {
+            alert("Ваш браузер не поддерживает дополненную реальность.\nПопробуйте на Android (Chrome) или iOS (Safari).");
+        }
+    });
 
-        viewer.addEventListener('error', () => {
-            barWrap.classList.remove('show');
-            err.classList.add('show');
-        });
-    </script>
+    // Убираем загрузчик после загрузки модели
+    viewer.addEventListener("load", () => {
+        const loader = document.querySelector(".loader");
+        if (loader) loader.style.display = "none";
+    });
+</script>
 </body>
 </html>
