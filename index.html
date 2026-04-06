@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Дополненная реальность — GLB модель</title>
-    <!-- Подключаем компонент model-viewer от Google -->
     <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
     <style>
         body {
@@ -12,7 +11,6 @@
             overflow: hidden;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-        /* Контейнер на весь экран */
         .ar-container {
             width: 100vw;
             height: 100vh;
@@ -23,7 +21,6 @@
             height: 100%;
             background-color: #f0f0f0;
         }
-        /* Инструкция и кнопка */
         .info {
             position: absolute;
             bottom: 20px;
@@ -68,7 +65,6 @@
                 font-size: 16px;
             }
         }
-        /* Загрузочный индикатор */
         .loader {
             position: absolute;
             top: 50%;
@@ -87,7 +83,7 @@
 <body>
 <div class="ar-container">
     <model-viewer id="ar-viewer"
-                  src="https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/main/2.0/DamagedHelmet/glTF/DamagedHelmet.gltf"
+                  src="model.glb"
                   alt="3D модель"
                   ar
                   ar-modes="scene-viewer webxr quick-look"
@@ -107,22 +103,10 @@
 </div>
 
 <script>
-    // ----- ЗАМЕНИТЕ ЭТУ ССЫЛКУ НА ВАШ GLB ФАЙЛ НА GITHUB -----
-    // Пример: "https://ваш-пользователь.github.io/ваш-репозиторий/модель.glb"
-    // Или используйте raw-ссылку из репозитория (должно быть HTTPS!)
-    const MODEL_URL = "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/main/2.0/DamagedHelmet/glTF/DamagedHelmet.gltf";
-    // Если у вас именно .glb, замените ссылку. Например:
-    // const MODEL_URL = "https://ваш-логин.github.io/название-репо/моя_модель.glb";
-    
     const viewer = document.getElementById("ar-viewer");
     const launchBtn = document.getElementById("ar-launch");
 
-    // Устанавливаем URL модели (замените на свой)
-    viewer.src = MODEL_URL;
-
-    // Обработчик для кнопки AR — запускает полноэкранный AR-режим
     launchBtn.addEventListener("click", () => {
-        // Активируем AR, если браузер поддерживает
         if (viewer.canActivateAR) {
             viewer.activateAR();
         } else {
@@ -130,7 +114,6 @@
         }
     });
 
-    // Убираем загрузчик после загрузки модели
     viewer.addEventListener("load", () => {
         const loader = document.querySelector(".loader");
         if (loader) loader.style.display = "none";
