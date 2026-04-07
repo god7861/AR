@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Дополненная реальность — GLB модель</title>
+    <title>AR Пончик — стабильная работа</title>
     <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
     <style>
         body {
             margin: 0;
             overflow: hidden;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
         }
         .ar-container {
             width: 100vw;
@@ -19,7 +19,7 @@
         model-viewer {
             width: 100%;
             height: 100%;
-            background-color: #f0f0f0;
+            background-color: #e9ecef;
         }
         .info {
             position: absolute;
@@ -27,15 +27,15 @@
             left: 0;
             right: 0;
             text-align: center;
-            background: rgba(0,0,0,0.7);
+            background: rgba(0,0,0,0.75);
             color: white;
             padding: 12px;
-            border-radius: 8px;
+            border-radius: 12px;
             margin: 0 20px;
-            pointer-events: none;
-            backdrop-filter: blur(5px);
+            backdrop-filter: blur(8px);
             font-size: 14px;
             z-index: 10;
+            pointer-events: none;
         }
         .ar-button {
             position: absolute;
@@ -48,35 +48,36 @@
             border-radius: 40px;
             padding: 12px 28px;
             font-size: 18px;
-            font-weight: bold;
+            font-weight: 600;
             cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.3);
             z-index: 20;
-            pointer-events: auto;
             transition: 0.2s;
+            font-family: inherit;
         }
-        .ar-button:hover {
-            background: #0056b3;
-        }
-        @media (max-width: 768px) {
-            .ar-button {
-                bottom: 100px;
-                padding: 10px 24px;
-                font-size: 16px;
-            }
+        .ar-button:active {
+            transform: translateX(-50%) scale(0.96);
+            background: #005ecf;
         }
         .loader {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            color: #333;
-            background: rgba(255,255,255,0.9);
-            padding: 12px 24px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 10px 20px;
             border-radius: 30px;
-            font-weight: bold;
+            font-size: 14px;
             z-index: 15;
             pointer-events: none;
+        }
+        @media (max-width: 768px) {
+            .ar-button {
+                bottom: 100px;
+                padding: 12px 28px;
+                font-size: 17px;
+            }
         }
     </style>
 </head>
@@ -84,21 +85,23 @@
 <div class="ar-container">
     <model-viewer id="ar-viewer"
                   src="model.glb"
-                  alt="3D модель"
+                  alt="Пончик в AR"
                   ar
                   ar-modes="scene-viewer webxr quick-look"
+                  ar-scale="auto"
                   camera-controls
                   auto-rotate
-                  rotation-per-second="30deg"
+                  rotation-per-second="20deg"
                   environment-image="neutral"
-                  shadow-intensity="1"
-                  exposure="1.2">
-        <div class="loader">Загрузка модели...</div>
+                  shadow-intensity="0.6"
+                  exposure="1.0"
+                  ios-src="model.glb">
+        <div class="loader">⏳ Загрузка пончика...</div>
     </model-viewer>
-    <button class="ar-button" id="ar-launch">🔍 Посмотреть в AR</button>
+    <button class="ar-button" id="ar-launch">🍩 Посмотреть в AR</button>
     <div class="info">
-        📱 Нажмите кнопку, чтобы поместить модель в реальное пространство.<br>
-        Поддерживается на Android (Google Scene Viewer) и iOS (ARKit Quick Look).
+        📱 Нажмите кнопку, наведите камеру на ровную поверхность (пол/стол).<br>
+        Водите телефоном плавно, чтобы AR «захватил» плоскость.
     </div>
 </div>
 
@@ -106,17 +109,19 @@
     const viewer = document.getElementById("ar-viewer");
     const launchBtn = document.getElementById("ar-launch");
 
+    // Убираем loader после загрузки
+    viewer.addEventListener("load", () => {
+        const loader = document.querySelector(".loader");
+        if (loader) loader.style.display = "none";
+    });
+
+    // Обработчик кнопки AR
     launchBtn.addEventListener("click", () => {
         if (viewer.canActivateAR) {
             viewer.activateAR();
         } else {
-            alert("Ваш браузер не поддерживает дополненную реальность.\nПопробуйте на Android (Chrome) или iOS (Safari).");
+            alert("Ваш браузер не поддерживает AR.\n\nПопробуйте:\n• Android: Chrome с Google Play Services for AR\n• iOS: Safari 12+");
         }
-    });
-
-    viewer.addEventListener("load", () => {
-        const loader = document.querySelector(".loader");
-        if (loader) loader.style.display = "none";
     });
 </script>
 </body>
